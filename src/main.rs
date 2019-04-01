@@ -1,31 +1,12 @@
 pub mod prompt;
 
-use std::io;
-use std::io::Write;
-use std::process;
-
-const LIMIT_HISTORY: usize = 1000;
+use std::io::{self, Write};
 
 fn main() {
     prompt::welcome();
-    let stdin = io::stdin();
-    let mut stdout = io::stdout();
-    let mut history_commands = Vec::with_capacity(LIMIT_HISTORY + 1);
 
     loop {
-        print!(">>> ");
-        let _ = stdout.flush();
-
-        let mut input = String::with_capacity(100);
-        let _ = stdin.read_line(&mut input).map_err(|_| {
-            println!("命令格式出错");
-            prompt::help();
-        });
-
-        history_commands.push(input.clone());
-        if history_commands.len() > LIMIT_HISTORY {
-            history_commands.remove(0);
-        }
+        let input = row_input(">>> ");
 
         let commands: Vec<String> = input
             .trim()
@@ -42,28 +23,29 @@ fn main() {
         let first_command = &commands[0];
         let rest_commands = &commands[1..];
 
-        dispatch(first_command, rest_commands);
+        dispatch_commands(first_command, rest_commands);
     }
 }
 
-fn dispatch(first_command: &str, rest_commands: &[String]) {
-    if first_command == "quit" {
-        println!("Good bye.");
-        process::exit(0);
-    } else if first_command == "help" {
-        prompt::help();
-    } else if first_command == "history" {
-        // TODO
-    } else if first_command == "get" {
-        println!("Get ==> {:?}", rest_commands);
-    } else if first_command == "put" {
-        println!("Put ==> {:?}", rest_commands);
-    } else if first_command == "delete" {
-        println!("Delete ==> {:?}", rest_commands);
-    } else if first_command == "scan" {
-        println!("Scan ==> {:?}", rest_commands);
-    } else {
-        println!("Wrong command.");
-        println!("  you can type the `help` command to learn more usage.");
+fn row_input(prompt: &str) -> String {
+    print!("{}", prompt);
+    let _ = io::stdout().flush();
+    let mut input_buf = String::with_capacity(100);
+    let _ = io::stdin().read_line(&mut input_buf);
+    input_buf
+}
+
+fn dispatch_commands(first_command: &str, rest_commands: &[String]) {
+    match first_command {
+        "quit" => prompt::quit(),
+        "help" => prompt::help(),
+        "history" => {
+            // TODO
+        }
+        "get" => println!("Get ==> {:?}", rest_commands),
+        "put" => println!("Put ==> {:?}", rest_commands),
+        "delete" => println!("Delete ==> {:?}", rest_commands),
+        "scan" => println!("scan ==> {:?}", rest_commands),
+        _ => prompt::wrong(),
     }
 }
