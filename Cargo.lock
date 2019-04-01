@@ -3,6 +3,10 @@ name = "slkv"
 version = "0.1.0"
 
 [[package]]
+name = "slkv-sugar"
+version = "0.1.0"
+
+[[package]]
 name = "slkv_server"
 version = "0.1.0"
 
