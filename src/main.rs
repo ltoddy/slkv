@@ -1,8 +1,12 @@
+pub mod communicate;
 pub mod prompt;
 
-use std::io::{self, Write};
+use std::io::{self, Read, Write};
+use std::net::TcpStream;
 
-fn main() {
+const ADDRESS: &str = "localhost:2333";
+
+fn main() -> io::Result<()> {
     prompt::welcome();
 
     loop {
@@ -24,6 +28,20 @@ fn main() {
         let rest_commands = &commands[1..];
 
         dispatch_commands(first_command, rest_commands);
+
+        {
+            let mut client = TcpStream::connect(ADDRESS)?;
+
+            rest_commands
+                .iter()
+                .for_each(|cmd: &String| client.write_all(cmd.as_bytes()).unwrap());
+
+            let mut buffer: [u8; 2] = [0; 2];
+            match client.read_exact(&mut buffer) {
+                Ok(_) if &buffer == b"ok" => println!("ok"),
+                _ => println!("operation failed."),
+            }
+        }
     }
 }
 
