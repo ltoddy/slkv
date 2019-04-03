@@ -1,12 +1,20 @@
+pub mod commands;
+pub mod communicate;
 pub mod prompt;
 
-use std::io::{self, Write};
+use std::io::{self, Read, Write};
+use std::net::TcpStream;
 
-fn main() {
-    prompt::welcome();
+use prompt::welcome;
+use std::str;
+
+const ADDRESS: &str = "localhost:2333";
+
+fn main() -> io::Result<()> {
+    welcome();
 
     loop {
-        let input = row_input(">>> ");
+        let input: String = row_input(">>> ");
 
         let commands: Vec<String> = input
             .trim()
@@ -20,10 +28,22 @@ fn main() {
         }
 
         // 因为之前已经有判断了, 所以这里很肯定数组长度大于等于 1
-        let first_command = &commands[0];
-        let rest_commands = &commands[1..];
+        let first_command: &String = &commands[0];
+        let rest_commands: &[String] = &commands[1..];
 
         dispatch_commands(first_command, rest_commands);
+
+        {
+            let mut client: TcpStream = TcpStream::connect(ADDRESS)?;
+
+            rest_commands.iter().for_each(|cmd: &String| {
+                let data: &[u8] = cmd.as_bytes();
+                client.write_all(data).unwrap();
+
+                let mut buffer = [0; 1024];
+                client.read_exact(&mut buffer[..data.len()]).unwrap();
+            });
+        }
     }
 }
 
