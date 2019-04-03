@@ -1,32 +1,31 @@
 use std::io::{self, Read, Write};
-use std::net::{Shutdown, TcpListener, TcpStream};
+use std::net::{TcpListener, TcpStream};
 
-fn handle_client(mut stream: TcpStream) {
+fn handle_client(mut stream: TcpStream) -> io::Result<()> {
     let mut data = [0 as u8; 1024]; // using 1014 byte buffer
-    while match stream.read(&mut data) {
-        Ok(size) if size > 0 => {
-            stream
-                .write(&data)
-                .map_err(|err| {
-                    println!("------------> {:?}", err);
-                    err
-                })
-                .unwrap();
-            println!(" ===> received size: {}", size);
-            let arguments = unsafe { String::from_utf8_unchecked(data[..size].to_vec()) };
-            println!("==> received: {:?}", arguments);
-            true
+    let mut arguments = Vec::with_capacity(10);
+
+    loop {
+        match stream.read(&mut data) {
+            Ok(size) => {
+                if size <= 0 {
+                    break; // received all data.
+                }
+
+                stream.write(&mut data[0..size])?;
+
+                let argument = String::from_utf8_lossy(&data[..size]).to_string();
+                arguments.push(argument);
+            }
+            Err(err) => {
+                println!("An error occurred, terminating connection with {:?}", err);
+                break;
+            }
         }
-        Err(_) => {
-            println!(
-                "An error occurred, terminating connection with {}",
-                stream.peer_addr().unwrap()
-            );
-            stream.shutdown(Shutdown::Both).unwrap();
-            false
-        }
-        _ => false,
-    } {}
+    }
+
+    println!("all arguments is --> {:?}", arguments);
+    Ok(())
 }
 
 const ADDRESS: &str = "0.0.0.0:2333";
@@ -38,9 +37,7 @@ fn main() -> io::Result<()> {
         for stream in listener.incoming() {
             match stream {
                 Ok(stream) => {
-                    println!("New connection: {}", stream.peer_addr()?);
-                    handle_client(stream);
-                    println!("disconnect ...");
+                    handle_client(stream)?;
                 }
                 Err(e) => {
                     println!("Error: {}", e);
