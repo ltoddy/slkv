@@ -2,13 +2,11 @@ pub mod commands;
 pub mod communicate;
 pub mod prompt;
 
-use std::io::{self, Read, Write};
-use std::net::TcpStream;
+use std::io::{self, Write};
 
-use prompt::welcome;
+use commands::Commander;
+use prompt::{welcome, Helper};
 use std::str;
-
-const ADDRESS: &str = "localhost:2333";
 
 fn main() -> io::Result<()> {
     welcome();
@@ -31,18 +29,9 @@ fn main() -> io::Result<()> {
         let first_command: &String = &commands[0];
         let rest_commands: &[String] = &commands[1..];
 
-        dispatch_commands(first_command, rest_commands);
-
-        {
-            let mut client: TcpStream = TcpStream::connect(ADDRESS)?;
-
-            rest_commands.iter().for_each(|cmd: &String| {
-                let data: &[u8] = cmd.as_bytes();
-                client.write_all(data).unwrap();
-
-                let mut buffer = [0; 1024];
-                client.read_exact(&mut buffer[..data.len()]).unwrap();
-            });
+        match dispatch_commands(first_command, rest_commands) {
+            Ok(_) => println!("ok"),
+            Err(_) => println!("some wrong, please try again."),
         }
     }
 }
@@ -55,17 +44,19 @@ fn row_input(prompt: &str) -> String {
     input_buf
 }
 
-fn dispatch_commands(first_command: &str, rest_commands: &[String]) {
+fn dispatch_commands(first_command: &str, rest_commands: &[String]) -> io::Result<()> {
+    let mut commander = Commander::new();
+    let helper = Helper::new();
+
     match first_command {
-        "quit" => prompt::quit(),
-        "help" => prompt::help(),
-        "history" => {
-            // TODO
-        }
-        "get" => println!("Get ==> {:?}", rest_commands),
-        "put" => println!("Put ==> {:?}", rest_commands),
-        "delete" => println!("Delete ==> {:?}", rest_commands),
-        "scan" => println!("scan ==> {:?}", rest_commands),
-        _ => prompt::wrong(),
-    }
+        "get" => commander.get(rest_commands)?,
+        "put" => commander.put(rest_commands)?,
+        "delete" => commander.delete(rest_commands)?,
+        "scan" => commander.scan(rest_commands)?,
+        "help" => helper.help(rest_commands),
+        "quit" => helper.quit(),
+        _ => helper.wrong(),
+    };
+
+    Ok(())
 }
