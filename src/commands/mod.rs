@@ -1,3 +1,4 @@
+use crate::commands::get::GetRequest;
 use std::io;
 use std::io::{Read, Write};
 use std::net::TcpStream;
@@ -7,69 +8,73 @@ pub mod get;
 pub mod put;
 pub mod scan;
 
-pub struct Commander {
-    client: TcpStream,
+const ADDRESS: &str = "localhost:2333";
+
+pub trait Request {
+    fn as_bytes(&self) -> Vec<u8>;
 }
 
+pub struct Commander {}
+
 impl Commander {
-    pub fn from_connection(client: TcpStream) -> Self {
-        Commander { client }
+    pub fn new() -> Self {
+        Commander {}
     }
 
     pub fn get(&mut self, args: &[String]) -> io::Result<()> {
-        let mut buffer = [0; 1024];
-
-        self.client.write_all(b"+")?;
-        self.client.read_exact(&mut buffer)?;
-
-        for arg in args {
-            self.client.write_all(arg.as_bytes())?;
-            self.client.read_exact(&mut buffer)?;
-        }
+        let mut client = TcpStream::connect(ADDRESS)?;
+        client.write_all(GetRequest::new(args).as_bytes().as_slice())?;
         Ok(())
     }
 
-    #[inline]
     pub fn put(&mut self, args: &[String]) -> io::Result<()> {
+        // TODO
+        let mut client = TcpStream::connect(ADDRESS)?;
         let mut buffer = [0; 1024];
 
-        self.client.write_all(b"+")?;
-        self.client.read_exact(&mut buffer)?;
+        client.write_all(b"+")?;
+        client.read_exact(&mut buffer)?;
 
         for arg in args {
-            self.client.write_all(arg.as_bytes())?;
-            self.client.read_exact(&mut buffer)?;
+            client.write_all(arg.as_bytes())?;
+            client.read_exact(&mut buffer)?;
         }
         Ok(())
     }
 
     pub fn delete(&mut self, args: &[String]) -> io::Result<()> {
+        // TODO
+        let mut client = TcpStream::connect(ADDRESS)?;
         let mut buffer = [0; 1024];
 
-        self.client.write_all(b"+")?;
-        self.client.read_exact(&mut buffer)?;
+        client.write_all(b"+")?;
+        client.read_exact(&mut buffer)?;
 
         for arg in args {
-            self.client.write_all(arg.as_bytes())?;
-            self.client.read_exact(&mut buffer)?;
+            client.write_all(arg.as_bytes())?;
+            client.read_exact(&mut buffer)?;
         }
         Ok(())
     }
 
     pub fn scan(&mut self, args: &[String]) -> io::Result<()> {
+        // TODO
+        let mut client = TcpStream::connect(ADDRESS)?;
         let mut buffer = [0; 1024];
 
-        self.client.write_all(b"+")?;
-        self.client.read_exact(&mut buffer)?;
+        client.write_all(b"+")?;
+        client.read_exact(&mut buffer)?;
 
         for arg in args {
-            self.client.write_all(arg.as_bytes())?;
-            self.client.read_exact(&mut buffer)?;
+            client.write_all(arg.as_bytes())?;
+            client.read_exact(&mut buffer)?;
         }
         Ok(())
     }
 }
 
-pub trait Request {
-    fn as_bytes(&self) -> Vec<u8>;
+impl Default for Commander {
+    fn default() -> Self {
+        Self::new()
+    }
 }

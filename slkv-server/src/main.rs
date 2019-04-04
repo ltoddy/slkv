@@ -8,7 +8,7 @@ fn handle_client(mut stream: TcpStream) -> io::Result<()> {
     loop {
         match stream.read(&mut data) {
             Ok(size) => {
-                if size <= 0 {
+                if size == 0 {
                     break; // received all data.
                 }
 
