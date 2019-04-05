@@ -6,10 +6,10 @@ pub struct DeleteRequest {
 }
 
 impl DeleteRequest {
-    pub fn new(args: &[String]) -> Self {
+    pub fn new(args: Vec<String>) -> Self {
         DeleteRequest {
             prefix: String::from("-"),
-            args: args.to_vec(),
+            args,
         }
     }
 }

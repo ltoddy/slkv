@@ -13,23 +13,13 @@ fn main() {
 
     loop {
         let input: String = row_input(">>> ");
-
-        let commands: Vec<String> = input
-            .trim()
-            .split(' ')
-            .filter(|command| command != &"")
-            .map(|command| command.into())
-            .collect();
-
-        if commands.is_empty() {
+        let input: &str = input.trim();
+        if input.is_empty() {
             continue;
         }
 
-        // 因为之前已经有判断了, 所以这里很肯定数组长度大于等于 1
-        let first_command: &String = &commands[0];
-        let rest_commands: &[String] = &commands[1..];
-
-        match dispatch_commands(first_command, rest_commands) {
+        let (first_command, rest_commands) = parse_to_commands(input);
+        match dispatch_command(first_command.as_str(), rest_commands) {
             Ok(_) => println!("ok"),
             Err(err) => println!("Oops, {}", err),
         }
@@ -39,21 +29,33 @@ fn main() {
 fn row_input(prompt: &str) -> String {
     print!("{}", prompt);
     let _ = io::stdout().flush();
-    let mut input_buf = String::with_capacity(100);
+    let mut input_buf = String::with_capacity(129);
     let _ = io::stdin().read_line(&mut input_buf);
     input_buf
 }
 
-fn dispatch_commands(first_command: &str, rest_commands: &[String]) -> Result<(), &'static str> {
+fn parse_to_commands(input: &str) -> (String, Vec<String>) {
+    let commands: Vec<String> = input
+        .split(' ')
+        .filter(|command| command != &"")
+        .map(|command| command.into())
+        .collect();
+
+    let first_command = &commands[0];
+    let rest_commands = &commands[1..];
+    (first_command.clone(), rest_commands.to_vec())
+}
+
+fn dispatch_command(command: &str, args: Vec<String>) -> Result<(), &'static str> {
     let mut commander = Commander::new();
     let helper = Helper::new();
 
-    match first_command {
-        "get" => commander.get(rest_commands)?,
-        "put" => commander.put(rest_commands)?,
-        "delete" => commander.delete(rest_commands)?,
-        "scan" => commander.scan(rest_commands)?,
-        "help" => helper.help(rest_commands),
+    match command {
+        "get" => commander.get(args)?,
+        "put" => commander.put(args)?,
+        "delete" => commander.delete(args)?,
+        "scan" => commander.scan(args)?,
+        "help" => helper.help(args),
         "quit" => helper.quit(),
         _ => helper.wrong(),
     };

@@ -6,10 +6,10 @@ pub struct GetRequest {
 }
 
 impl GetRequest {
-    pub fn new(args: &[String]) -> Self {
+    pub fn new(args: Vec<String>) -> Self {
         GetRequest {
             prefix: String::from("*"),
-            args: args.to_vec(),
+            args,
         }
     }
 }

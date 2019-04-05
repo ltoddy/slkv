@@ -6,10 +6,10 @@ pub struct PutRequest {
 }
 
 impl PutRequest {
-    pub fn new(args: &[String]) -> Self {
+    pub fn new(args: Vec<String>) -> Self {
         PutRequest {
             prefix: String::from("+"),
-            args: args.to_vec(),
+            args,
         }
     }
 }

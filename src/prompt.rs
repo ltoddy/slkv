@@ -17,7 +17,7 @@ impl Helper {
         Helper {}
     }
 
-    pub fn help(&self, operator: &[String]) {
+    pub fn help(&self, operator: Vec<String>) {
         if operator.is_empty() {
             println!("You seem to have trouble.");
             println!("This key-value database has four operators:");
@@ -33,7 +33,7 @@ impl Helper {
             "put" => Self::put_command_usage(),
             "delete" => Self::delete_command_usage(),
             "scan" => Self::scan_command_usage(),
-            _ => self.help(&[]),
+            _ => self.help(vec![]),
         }
     }
 

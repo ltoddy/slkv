@@ -20,28 +20,28 @@ impl Commander {
         Commander {}
     }
 
-    pub fn get(&mut self, args: &[String]) -> Result<(), &'static str> {
+    pub fn get(&mut self, args: Vec<String>) -> Result<(), &'static str> {
         let data = GetRequest::new(args).as_bytes();
 
         send_request(data)?;
         Ok(())
     }
 
-    pub fn put(&mut self, args: &[String]) -> Result<(), &'static str> {
+    pub fn put(&mut self, args: Vec<String>) -> Result<(), &'static str> {
         let data = PutRequest::new(args).as_bytes();
 
         send_request(data)?;
         Ok(())
     }
 
-    pub fn delete(&mut self, args: &[String]) -> Result<(), &'static str> {
+    pub fn delete(&mut self, args: Vec<String>) -> Result<(), &'static str> {
         let data = DeleteRequest::new(args).as_bytes();
 
         send_request(data)?;
         Ok(())
     }
 
-    pub fn scan(&mut self, args: &[String]) -> Result<(), &'static str> {
+    pub fn scan(&mut self, args: Vec<String>) -> Result<(), &'static str> {
         if args.len() != 2 {
             return Err("Wrong numbers of parameters");
         }
