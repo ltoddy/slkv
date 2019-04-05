@@ -3,8 +3,7 @@ mod get;
 mod put;
 mod scan;
 
-use std::io;
-use std::io::{Read, Write};
+use std::io::Write;
 use std::net::TcpStream;
 
 use self::delete::DeleteRequest;
@@ -25,41 +24,60 @@ impl Commander {
         Commander {}
     }
 
-    pub fn get(&mut self, args: &[String]) -> io::Result<()> {
-        let mut client = TcpStream::connect(ADDRESS)?;
+    pub fn get(&mut self, args: &[String]) -> Result<(), &'static str> {
         let data = GetRequest::new(args).as_bytes();
-        client.write_all(data.as_slice())?;
+
+        let mut client = TcpStream::connect(ADDRESS).map_err(|_| "Connection failed.")?;
+        client
+            .write_all(data.as_slice())
+            .map_err(|_| "Failed to send data.")?;
         Ok(())
     }
 
-    pub fn put(&mut self, args: &[String]) -> io::Result<()> {
-        let mut client = TcpStream::connect(ADDRESS)?;
+    pub fn put(&mut self, args: &[String]) -> Result<(), &'static str> {
         let data = PutRequest::new(args).as_bytes();
-        client.write_all(data.as_slice())?;
+
+        let mut client = TcpStream::connect(ADDRESS).map_err(|_| "Connection failed.")?;
+        client
+            .write_all(data.as_slice())
+            .map_err(|_| "Failed to send data.")?;
+
         Ok(())
     }
 
-    pub fn delete(&mut self, args: &[String]) -> io::Result<()> {
-        let mut client = TcpStream::connect(ADDRESS)?;
+    pub fn delete(&mut self, args: &[String]) -> Result<(), &'static str> {
         let data = DeleteRequest::new(args).as_bytes();
-        client.write_all(data.as_slice())?;
+
+        let mut client = TcpStream::connect(ADDRESS).map_err(|_| "Connection failed.")?;
+        client
+            .write_all(data.as_slice())
+            .map_err(|_| "Failed to send data.")?;
+
         Ok(())
     }
 
-    pub fn scan(&mut self, args: &[String]) -> io::Result<()> {
-        let mut client = TcpStream::connect(ADDRESS)?;
+    pub fn scan(&mut self, args: &[String]) -> Result<(), &'static str> {
+        if args.len() != 2 {
+            return Err("Wrong numbers of parameters");
+        }
 
-        if args.len() != 2 {}
-        let [begin, end] = args[..2];
+        let begin = args.get(0).unwrap();
+        let end = args.get(1).unwrap();
+
         let begin = begin
             .parse::<usize>()
-            .map_err(|_| Err("Analytical parameter error, use non-negative number."))?;
+            .map_err(|_| "Analytical parameter error, use non-negative number.")?;
         let end = end
             .parse::<usize>()
-            .map_err(|_| Err("Analytical parameter error, use non-negative number."))?;
+            .map_err(|_| "Analytical parameter error, use non-negative number.")?;
 
-            let data = ScanRequest::new(begin, end).as_bytes();
-        client.write_all(data.as_slice())?;
+        let data = ScanRequest::new(begin, end).as_bytes();
+
+        let mut client = TcpStream::connect(ADDRESS).map_err(|_| "Connection failed.")?;
+        client
+            .write_all(data.as_slice())
+            .map_err(|_| "Failed to send data.")?;
+
         Ok(())
     }
 }
