@@ -9,7 +9,7 @@ pub struct ScanRequest {
 impl ScanRequest {
     pub fn new(begin: usize, end: usize) -> Self {
         ScanRequest {
-            prefix: String::from("*"),
+            prefix: String::from("/"),
             begin,
             end,
         }
@@ -18,7 +18,7 @@ impl ScanRequest {
 
 impl Request for ScanRequest {
     fn as_bytes(&self) -> Vec<u8> {
-        let ScanRequest { prefix, begin, end } = self;
+        let Self { prefix, begin, end } = self;
         let mut buffer = prefix.clone().into_bytes();
         buffer.append(&mut begin.to_be_bytes().to_vec());
         buffer.append(&mut end.to_be_bytes().to_vec());

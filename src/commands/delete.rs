@@ -8,7 +8,7 @@ pub struct DeleteRequest {
 impl DeleteRequest {
     pub fn new(args: &[String]) -> Self {
         DeleteRequest {
-            prefix: String::from("*"),
+            prefix: String::from("-"),
             args: args.to_vec(),
         }
     }
@@ -16,12 +16,19 @@ impl DeleteRequest {
 
 impl Request for DeleteRequest {
     fn as_bytes(&self) -> Vec<u8> {
-        let DeleteRequest { prefix, args } = self;
+        let Self { prefix, args } = self;
         let mut buffer = prefix.clone().into_bytes();
         buffer.append(
             &mut args
                 .iter()
-                .map(|arg| arg.clone().into_bytes())
+                .enumerate()
+                .map(|(index, arg)| {
+                    let mut temp = arg.clone().into_bytes();
+                    if index + 1 != args.len() {
+                        temp.push(32);
+                    }
+                    temp
+                })
                 .flat_map(|this| this)
                 .collect::<Vec<_>>(),
         );
