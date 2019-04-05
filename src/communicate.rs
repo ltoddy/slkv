@@ -1,20 +1,12 @@
-//use std::io;
-//use std::net::TcpStream;
-//
-//pub struct Communicator {
-//    addr: &'static str,
-//    client: TcpStream,
-//}
-//
-//impl Communicator {
-//    pub fn connect(addr: &'static str) -> Self {
-//        let client = TcpStream::connect(addr)
-//            .map_err(|err| {
-//                println!("can't connect slkv server.\n  {:?}", err);
-//                err
-//            })
-//            .unwrap();
-//
-//        Communicator { addr, client }
-//    }
-//}
+use std::io::Write;
+use std::net::TcpStream;
+
+const ADDRESS: &str = "localhost:2333";
+
+pub fn send_request(data: Vec<u8>) -> Result<(), &'static str> {
+    let mut client = TcpStream::connect(ADDRESS).map_err(|_| "Connection failed.")?;
+    client
+        .write_all(data.as_slice())
+        .map_err(|_| "Failed to send data.")?;
+    Ok(())
+}

@@ -3,15 +3,11 @@ mod get;
 mod put;
 mod scan;
 
-use std::io::Write;
-use std::net::TcpStream;
-
 use self::delete::DeleteRequest;
 use self::get::GetRequest;
 use self::put::PutRequest;
 use self::scan::ScanRequest;
-
-const ADDRESS: &str = "localhost:2333";
+use super::communicate::send_request;
 
 pub trait Request {
     fn as_bytes(&self) -> Vec<u8>;
@@ -27,32 +23,21 @@ impl Commander {
     pub fn get(&mut self, args: &[String]) -> Result<(), &'static str> {
         let data = GetRequest::new(args).as_bytes();
 
-        let mut client = TcpStream::connect(ADDRESS).map_err(|_| "Connection failed.")?;
-        client
-            .write_all(data.as_slice())
-            .map_err(|_| "Failed to send data.")?;
+        send_request(data)?;
         Ok(())
     }
 
     pub fn put(&mut self, args: &[String]) -> Result<(), &'static str> {
         let data = PutRequest::new(args).as_bytes();
 
-        let mut client = TcpStream::connect(ADDRESS).map_err(|_| "Connection failed.")?;
-        client
-            .write_all(data.as_slice())
-            .map_err(|_| "Failed to send data.")?;
-
+        send_request(data)?;
         Ok(())
     }
 
     pub fn delete(&mut self, args: &[String]) -> Result<(), &'static str> {
         let data = DeleteRequest::new(args).as_bytes();
 
-        let mut client = TcpStream::connect(ADDRESS).map_err(|_| "Connection failed.")?;
-        client
-            .write_all(data.as_slice())
-            .map_err(|_| "Failed to send data.")?;
-
+        send_request(data)?;
         Ok(())
     }
 
@@ -61,8 +46,8 @@ impl Commander {
             return Err("Wrong numbers of parameters");
         }
 
-        let begin = args.get(0).unwrap();
-        let end = args.get(1).unwrap();
+        let begin = &args[0];
+        let end = &args[1];
 
         let begin = begin
             .parse::<usize>()
@@ -73,11 +58,7 @@ impl Commander {
 
         let data = ScanRequest::new(begin, end).as_bytes();
 
-        let mut client = TcpStream::connect(ADDRESS).map_err(|_| "Connection failed.")?;
-        client
-            .write_all(data.as_slice())
-            .map_err(|_| "Failed to send data.")?;
-
+        send_request(data)?;
         Ok(())
     }
 }

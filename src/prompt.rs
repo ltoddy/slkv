@@ -27,7 +27,7 @@ impl Helper {
             println!("  - `scan`");
             return;
         }
-        let operator = operator.get(0).unwrap();
+        let operator = &operator[0];
         match operator.as_str() {
             "get" => Self::get_command_usage(),
             "put" => Self::put_command_usage(),
