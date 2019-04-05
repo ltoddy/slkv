@@ -8,7 +8,7 @@ use commands::Commander;
 use prompt::{welcome, Helper};
 use std::str;
 
-fn main() -> io::Result<()> {
+fn main() {
     welcome();
 
     loop {
@@ -31,7 +31,7 @@ fn main() -> io::Result<()> {
 
         match dispatch_commands(first_command, rest_commands) {
             Ok(_) => println!("ok"),
-            Err(_) => println!("some wrong, please try again."),
+            Err(err) => println!("Oops, {}", err),
         }
     }
 }
@@ -44,7 +44,7 @@ fn row_input(prompt: &str) -> String {
     input_buf
 }
 
-fn dispatch_commands(first_command: &str, rest_commands: &[String]) -> io::Result<()> {
+fn dispatch_commands(first_command: &str, rest_commands: &[String]) -> Result<(), &'static str> {
     let mut commander = Commander::new();
     let helper = Helper::new();
 
