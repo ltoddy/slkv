@@ -1,7 +1,7 @@
 use std::io::{BufRead, BufReader, Write};
 use std::net::TcpStream;
 
-const ADDRESS: &str = "localhost:2333";
+use crate::config::ADDRESS;
 
 pub fn send_request(data: Vec<u8>) -> Result<(), &'static str> {
     let mut stream = TcpStream::connect(ADDRESS).map_err(|_| "Connection failed.")?;

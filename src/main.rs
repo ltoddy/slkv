@@ -1,12 +1,13 @@
 pub mod commands;
 pub mod communicate;
+pub mod config;
 pub mod prompt;
 
 use std::io::{self, Write};
+use std::str;
 
 use commands::Commander;
 use prompt::{welcome, Helper};
-use std::str;
 
 fn main() {
     welcome();
