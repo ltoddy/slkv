@@ -6,9 +6,7 @@
 
 ## Guide
 
-<video width="320" height="240" controls>
-  <source src="assets/guide.mkv" type="video/mkv">
-</video>
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/stotBH8TCXY/0.jpg)](https://www.youtube.com/watch?v=stotBH8TCXY)
 
 ## Communicate protocol
 
