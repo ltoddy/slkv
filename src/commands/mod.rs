@@ -49,14 +49,14 @@ impl Commander {
         let begin = &args[0];
         let end = &args[1];
 
-        let begin = begin
+        let _ = begin
             .parse::<usize>()
             .map_err(|_| "Analytical parameter error, use non-negative number.")?;
-        let end = end
+        let _ = end
             .parse::<usize>()
             .map_err(|_| "Analytical parameter error, use non-negative number.")?;
 
-        let data = ScanRequest::new(begin, end).as_bytes();
+        let data = ScanRequest::new(args).as_bytes();
 
         send_request(data)?;
         Ok(())
