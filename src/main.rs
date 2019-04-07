@@ -1,12 +1,13 @@
 pub mod commands;
 pub mod communicate;
+pub mod config;
 pub mod prompt;
 
 use std::io::{self, Write};
+use std::str;
 
 use commands::Commander;
 use prompt::{welcome, Helper};
-use std::str;
 
 fn main() {
     welcome();
@@ -20,7 +21,7 @@ fn main() {
 
         let (first_command, rest_commands) = parse_to_commands(input);
         match dispatch_command(first_command.as_str(), rest_commands) {
-            Ok(_) => println!("ok"),
+            Ok(_) => (),
             Err(err) => println!("Oops, {}", err),
         }
     }
