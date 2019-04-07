@@ -15,7 +15,7 @@ before_script:
 - rustup component add clippy
 
 script:
-  - cargo fmt --all -- --check `find src -iname "*.rs"`
+  - cargo fmt --all -- --check
   - cargo build --verbose --all
   - cargo test --verbose --all
   - cargo clippy --release -- -D clippy::all
