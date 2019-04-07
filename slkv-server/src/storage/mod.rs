@@ -71,7 +71,7 @@ impl Storage {
                     key,
                     self.map.get(key).unwrap_or(&String::from("None"))
                 )
-                .as_str(),
+                    .as_str(),
             )
         });
 
@@ -88,8 +88,20 @@ impl Storage {
         for index in (0..kvs.len()).step_by(2) {
             let key = kvs[index].to_string();
             let value = kvs[index + 1].to_string();
-            self.list.push_back(Entry::new(key.clone(), value.clone()));
-            self.map.insert(key.clone(), value.clone());
+
+            if self.map.contains_key(&key) {
+                self.map.insert(key.clone(), value.clone());
+                self.list = self
+                    .list
+                    .iter()
+                    .filter(|entry| *entry != &key)
+                    .cloned()
+                    .collect::<LinkedList<Entry>>();
+                self.list.push_back(Entry::new(key.clone(), value.clone()));
+            } else {
+                self.list.push_back(Entry::new(key.clone(), value.clone()));
+                self.map.insert(key.clone(), value.clone());
+            }
         }
 
         self.dump_to_file(Path::new(FILE_PATH))
