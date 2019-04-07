@@ -20,7 +20,7 @@ fn main() {
 
         let (first_command, rest_commands) = parse_to_commands(input);
         match dispatch_command(first_command.as_str(), rest_commands) {
-            Ok(_) => println!("ok"),
+            Ok(_) => (),
             Err(err) => println!("Oops, {}", err),
         }
     }
