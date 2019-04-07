@@ -13,7 +13,7 @@ impl Entry {
 
     pub fn to_string(&self) -> String {
         let Self { key, value } = self;
-        format!("Entry({}, {})", key, value)
+        format!("{} {}\n", key, value)
     }
 
     pub fn as_bytes(&self) -> Vec<u8> {
@@ -41,6 +41,6 @@ impl PartialEq<String> for Entry {
 
 impl Display for Entry {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        write!(f, "{} => {}", self.key, self.value)
+        write!(f, "{} {}", self.key, self.value)
     }
 }

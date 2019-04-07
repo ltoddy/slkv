@@ -3,10 +3,11 @@ pub mod entry;
 use std::collections::{HashMap, LinkedList};
 use std::fs::{self, File};
 use std::io;
-use std::io::{Read, Write};
+use std::io::{BufRead, BufReader};
 use std::path::Path;
 
 use self::entry::Entry;
+use crate::FILE_PATH;
 
 #[derive(Debug)]
 pub struct Storage {
@@ -22,40 +23,30 @@ impl Storage {
         }
     }
 
+    fn insert(&mut self, key: String, value: String) {
+        self.map.insert(key.clone(), value.clone());
+        self.list.push_back(Entry::new(key.clone(), value.clone()));
+    }
+
     pub fn load_from_file(filename: &Path) -> io::Result<Self> {
-        let mut file = File::open(filename)?;
-        let mut buffer = String::with_capacity(1024);
-        file.read_to_string(&mut buffer)?;
-
         let mut storage = Self::new();
+        let file = File::open(filename)?;
+        let reader = BufReader::new(&file);
 
-        let a = buffer.split("\n");
-        println!("=====> {:?}", a);
+        for line in reader.lines() {
+            let line = line.unwrap();
+            let kv: Vec<&str> = line.split(" ").collect();
+            let key = kv[0].to_string();
+            let value = kv[1].to_string();
+            storage.insert(key, value);
+        }
 
         Ok(storage)
     }
 
     pub fn dump_to_file(&self, filename: &Path) -> io::Result<()> {
-        //        let mut file = match File::open(filename) {
-        //            Ok(file) => file,
-        //            Err(_) => File::create(filename).map_err(|err| {
-        //                eprintln!("Can't create: {}", err);
-        //                err
-        //            })?,
-        //        };
         fs::write(filename, self.to_string())?;
-
         Ok(())
-    }
-
-    fn as_bytes(&self) -> Vec<u8> {
-        let mut buffer = Vec::with_capacity(1024);
-
-        self.list
-            .iter()
-            .for_each(|entry| buffer.append(&mut entry.as_bytes()));
-
-        buffer
     }
 
     fn to_string(&self) -> String {
@@ -84,8 +75,6 @@ impl Storage {
             )
         });
 
-        println!("get final:====> {:?}", self);
-
         data
     }
 
@@ -93,7 +82,7 @@ impl Storage {
         println!("put request, received data: {:?}", kvs);
 
         if kvs.len() % 2 != 0 {
-            kvs.pop(); // throw away the last useless element
+            kvs.pop(); // throw the last useless element
         }
 
         for index in (0..kvs.len()).step_by(2) {
@@ -102,6 +91,9 @@ impl Storage {
             self.list.push_back(Entry::new(key.clone(), value.clone()));
             self.map.insert(key.clone(), value.clone());
         }
+
+        // Fatal error, shutdown!
+        self.dump_to_file(Path::new(FILE_PATH)).unwrap();
 
         String::from("Ok\n")
     }
@@ -119,9 +111,28 @@ impl Storage {
                 .collect::<LinkedList<Entry>>();
         });
 
+        // Fatal error, shutdown!
+        self.dump_to_file(Path::new(FILE_PATH)).unwrap();
+
         String::from("Ok\n")
     }
 
-    // TODO
-    // pub fn scan(&self, start: usize, end: usize) {}
+    pub fn scan(&self, args: Vec<String>) -> String {
+        println!("scan request, received data: {:?}", args);
+
+        let (start, end) = (
+            args[0].parse::<usize>().unwrap_or(0),
+            args[1].parse::<usize>().unwrap_or(0),
+        );
+
+        self.list
+            .iter()
+            .skip(start)
+            .take(end - start)
+            .map(Entry::to_string)
+            .fold(String::with_capacity(1024), |mut acc, x| {
+                acc.push_str(x.as_str());
+                acc
+            })
+    }
 }
