@@ -56,7 +56,11 @@ impl Commander {
             .parse::<usize>()
             .map_err(|_| "Analytical parameter error, use non-negative number.")?;
 
-        let data = ScanRequest::new(begin, end).as_bytes();
+        if begin > end {
+            return Err("The last parameter must greater this first parameter.");
+        }
+
+        let data = ScanRequest::new(args).as_bytes();
 
         send_request(data)?;
         Ok(())
