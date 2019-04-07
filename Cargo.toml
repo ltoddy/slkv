@@ -1,14 +1,5 @@
-[package]
-name = "slkv"
-version = "0.1.0"
-authors = ["ltoddy <taoliu0509@gmail.com>"]
-edition = "2018"
-
 [workspace]
 members = [
-    ".",
+    "slkv-client",
     "slkv-server",
-    "slkv-sugar",
 ]
-
-[dependencies]

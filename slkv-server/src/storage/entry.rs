@@ -13,7 +13,7 @@ impl Entry {
 
     pub fn to_string(&self) -> String {
         let Self { key, value } = self;
-        format!("{} {}\n", key, value)
+        format!("{} => {}\n", key, value)
     }
 
     pub fn as_bytes(&self) -> Vec<u8> {

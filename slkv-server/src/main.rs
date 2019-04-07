@@ -18,7 +18,6 @@ fn main() -> io::Result<()> {
             match stream {
                 Ok(stream) => {
                     let _ = handle_client(&mut storage, stream);
-                    ()
                 }
                 Err(e) => println!("Error: {}", e),
             };
@@ -51,15 +50,6 @@ fn handle_client(storage: &mut Storage, mut stream: TcpStream) -> io::Result<()>
         .map_err(|err| {
             println!("An error occurred, terminating connection with {:?}", err);
         });
-    //    match stream.read(&mut data) {
-    //        Ok(size) => {
-    //            let argument = String::from_utf8_lossy(&data[..size]).to_string();
-    //            arguments.push(argument);
-    //        }
-    //        Err(err) => {
-    //            println!("An error occurred, terminating connection with {:?}", err);
-    //        }
-    //    }
 
     let argument = arguments
         .iter()
@@ -78,18 +68,18 @@ fn handle_client(storage: &mut Storage, mut stream: TcpStream) -> io::Result<()>
 }
 
 fn dispatch(storage: &mut Storage, argument: String) -> String {
-    let args: Vec<String> = argument[1..].split(" ").map(|s| s.into()).collect();
+    let args: Vec<String> = argument[1..].split(' ').map(|s| s.into()).collect();
 
-    if argument.starts_with("+") {
-        return storage.put(args);
-    } else if argument.starts_with("*") {
-        return storage.get(args);
-    } else if argument.starts_with("-") {
-        return storage.delete(args);
-    } else if argument.starts_with("/") {
-        return storage.scan(args);
+    if argument.starts_with('+') {
+        storage.put(args)
+    } else if argument.starts_with('*') {
+        storage.get(args)
+    } else if argument.starts_with('-') {
+        storage.delete(args)
+    } else if argument.starts_with('/') {
+        storage.scan(args)
     } else {
         // useless
-        return String::new();
+        String::new()
     }
 }

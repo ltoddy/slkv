@@ -1,5 +1,5 @@
 [package]
-name = "slkv_server"
+name = "slkv-server"
 version = "0.1.0"
 authors = ["ltoddy <taoliu0509@gmail.com>"]
 edition = "2018"

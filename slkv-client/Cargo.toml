@@ -1,5 +1,5 @@
 [package]
-name = "slkv-sugar"
+name = "slkv-client"
 version = "0.1.0"
 authors = ["ltoddy <taoliu0509@gmail.com>"]
 edition = "2018"
