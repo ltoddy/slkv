@@ -6,7 +6,7 @@
 
 ## Guide
 
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/stotBH8TCXY/0.jpg)](https://www.youtube.com/watch?v=stotBH8TCXY)
+[![youtube](https://img.youtube.com/vi/stotBH8TCXY/0.jpg)](https://www.youtube.com/watch?v=stotBH8TCXY)
 
 ## Communicate protocol
 
@@ -43,7 +43,7 @@
 
 ## Persistence protocol
 
-Due to time, store file content liks:
+Due to time, store file content likes:
 
 ```
 key1 value1
