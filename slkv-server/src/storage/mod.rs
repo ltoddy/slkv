@@ -71,7 +71,7 @@ impl Storage {
                     key,
                     self.map.get(key).unwrap_or(&String::from("None"))
                 )
-                    .as_str(),
+                .as_str(),
             )
         });
 
