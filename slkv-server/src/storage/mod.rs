@@ -1,35 +1,12 @@
+pub mod entry;
+
 use std::collections::{HashMap, LinkedList};
 use std::fs::{self, File};
 use std::io;
 use std::io::{Read, Write};
 use std::path::Path;
 
-#[derive(Debug, Clone)]
-struct Entry {
-    key: String,
-    value: String,
-}
-
-impl Entry {
-    pub fn new(key: String, value: String) -> Self {
-        Entry { key, value }
-    }
-
-    pub fn to_string(&self) -> String {
-        let Self { key, value } = self;
-        format!("Entry({}, {})", key, value)
-    }
-
-    pub fn as_bytes(&self) -> Vec<u8> {
-        let Self { key, value } = self;
-
-        let mut buffer = Vec::with_capacity(self.key.len() + self.value.len() + 1);
-        buffer.append(&mut key.clone().into_bytes());
-        buffer.append(&mut value.clone().into_bytes());
-        buffer.push(10);
-        buffer
-    }
-}
+use self::entry::Entry;
 
 #[derive(Debug)]
 pub struct Storage {
@@ -85,8 +62,7 @@ impl Storage {
         let mut buffer = String::with_capacity(1024);
 
         self.list.iter().for_each(|entry| {
-            let Entry { key, value } = entry;
-            buffer.push_str(format!("{} {}\n", key, value).as_str());
+            buffer.push_str(format!("{}\n", entry).as_str());
         });
 
         buffer
@@ -138,7 +114,7 @@ impl Storage {
             self.list = self
                 .list
                 .iter()
-                .filter(|entry| &entry.key != key)
+                .filter(|entry| entry != &key)
                 .map(|entry| entry.clone())
                 .collect::<LinkedList<Entry>>();
         });
