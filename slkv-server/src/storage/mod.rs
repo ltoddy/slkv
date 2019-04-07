@@ -35,7 +35,7 @@ impl Storage {
 
         for line in reader.lines() {
             let line = line.unwrap();
-            let kv: Vec<&str> = line.split(" ").collect();
+            let kv: Vec<&str> = line.split(' ').collect();
             let key = kv[0].to_string();
             let value = kv[1].to_string();
             storage.insert(key, value);
@@ -92,8 +92,8 @@ impl Storage {
             self.map.insert(key.clone(), value.clone());
         }
 
-        // Fatal error, shutdown!
-        self.dump_to_file(Path::new(FILE_PATH)).unwrap();
+        self.dump_to_file(Path::new(FILE_PATH))
+            .expect("Fatal error, shutdown!");
 
         String::from("Ok\n")
     }
@@ -107,12 +107,12 @@ impl Storage {
                 .list
                 .iter()
                 .filter(|entry| entry != &key)
-                .map(|entry| entry.clone())
+                .cloned()
                 .collect::<LinkedList<Entry>>();
         });
 
-        // Fatal error, shutdown!
-        self.dump_to_file(Path::new(FILE_PATH)).unwrap();
+        self.dump_to_file(Path::new(FILE_PATH))
+            .expect("Fatal error, shutdown!");
 
         String::from("Ok\n")
     }
@@ -134,5 +134,11 @@ impl Storage {
                 acc.push_str(x.as_str());
                 acc
             })
+    }
+}
+
+impl Default for Storage {
+    fn default() -> Self {
+        Self::new()
     }
 }
