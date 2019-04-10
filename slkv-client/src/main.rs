@@ -63,3 +63,29 @@ fn dispatch_command(command: &str, args: Vec<String>) -> Result<(), &'static str
 
     Ok(())
 }
+
+#[cfg(test)]
+pub mod test {
+    use super::parse_to_commands;
+
+    #[test]
+    pub fn test_parse_to_commands() {
+        let input = "put    foo  bar";
+        let (first_command, rest_commands) = parse_to_commands(input);
+
+        assert_eq!(first_command, "put");
+        assert_eq!(rest_commands, vec!["foo", "bar"]);
+
+        let input = "put    k1  v1  k2  v2";
+        let (first_command, rest_commands) = parse_to_commands(input);
+
+        assert_eq!(first_command, "put");
+        assert_eq!(rest_commands, vec!["k1", "v1", "k2", "v2"]);
+
+        let input = "any    k1  v1  k2  v2";
+        let (first_command, rest_commands) = parse_to_commands(input);
+
+        assert_eq!(first_command, "any");
+        assert_eq!(rest_commands, vec!["k1", "v1", "k2", "v2"]);
+    }
+}
