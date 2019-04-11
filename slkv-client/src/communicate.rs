@@ -15,6 +15,7 @@ pub fn send_request(data: Vec<u8>) -> Result<(), &'static str> {
     reader
         .read_until(b'!', &mut buffer)
         .map_err(|_| "Failed received data.")?;
+
     println!(
         "{}",
         String::from_utf8(buffer)
