@@ -35,3 +35,22 @@ impl Request for PutRequest {
         buffer
     }
 }
+
+#[cfg(test)]
+pub mod test {
+    use super::super::Request;
+    use super::PutRequest;
+
+    #[test]
+    pub fn test_put_request() {
+        let args = vec![
+            "k1".to_string(),
+            "v1".to_string(),
+            "k2".to_string(),
+            "v2".to_string(),
+        ];
+        let request = PutRequest::new(args);
+
+        assert_eq!(request.as_bytes(), b"+k1 v1 k2 v2");
+    }
+}

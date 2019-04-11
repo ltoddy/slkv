@@ -35,3 +35,17 @@ impl Request for ScanRequest {
         buffer
     }
 }
+
+#[cfg(test)]
+pub mod test {
+    use super::super::Request;
+    use super::ScanRequest;
+
+    #[test]
+    pub fn test_scan_request() {
+        let args = vec!["0".to_string(), "1".to_string()];
+        let request = ScanRequest::new(args);
+
+        assert_eq!(request.as_bytes(), b"/0 1");
+    }
+}
