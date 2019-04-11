@@ -23,7 +23,6 @@ before_cache:
 
 env:
 - RUST_TEST_THREADS=1
-- CODECOV_TOKEN="6e9ecce7-208c-4f45-8e0f-6be62b3a4bdf"
 
 before_script:
 - export PATH="$HOME/.cargo/bin:$PATH"
