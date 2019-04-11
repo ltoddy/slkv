@@ -35,3 +35,17 @@ impl Request for DeleteRequest {
         buffer
     }
 }
+
+#[cfg(test)]
+pub mod test {
+    use super::super::Request;
+    use super::DeleteRequest;
+
+    #[test]
+    pub fn test_delete_request() {
+        let args = vec!["k1".to_string(), "k2".to_string(), "k3".to_string()];
+        let request = DeleteRequest::new(args);
+
+        assert_eq!(request.as_bytes(), b"-k1 k2 k3");
+    }
+}

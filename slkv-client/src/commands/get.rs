@@ -35,3 +35,17 @@ impl Request for GetRequest {
         buffer
     }
 }
+
+#[cfg(test)]
+pub mod test {
+    use super::super::Request;
+    use super::GetRequest;
+
+    #[test]
+    pub fn test_get_request() {
+        let args = vec!["k1".to_string(), "k2".to_string()];
+        let request = GetRequest::new(args);
+
+        assert_eq!(request.as_bytes(), b"*k1 k2");
+    }
+}
