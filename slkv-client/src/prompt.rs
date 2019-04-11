@@ -10,6 +10,7 @@ pub fn welcome() {
     println!();
 }
 
+// 本可以不定义这个Helper结构体,但是如果不定义,客户端就显得太面向过程了.
 pub struct Helper {}
 
 impl Helper {
@@ -79,6 +80,7 @@ impl Helper {
     }
 }
 
+// Just for clippy
 impl Default for Helper {
     fn default() -> Self {
         Self::new()
