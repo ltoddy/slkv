@@ -16,6 +16,8 @@ pub fn send_request(data: Vec<u8>) -> Result<(), &'static str> {
         .read_until(b'!', &mut buffer)
         .map_err(|_| "Failed received data.")?;
 
+    // 这里, 在这个函数中直接打印出来了, 这并不好, 最好的方式是把接收到的response返回出去,让调用方去print.
+    // 不过我并没有怎么见过一个函数返回 Result<String, &'static str>.
     println!(
         "{}",
         String::from_utf8(buffer)
