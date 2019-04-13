@@ -43,6 +43,16 @@ pub mod test {
 
     #[test]
     pub fn test_delete_request() {
+        let args = vec![];
+        let request = DeleteRequest::new(args);
+
+        assert_eq!(request.as_bytes(), b"-");
+
+        let args = vec!["k1".to_string()];
+        let request = DeleteRequest::new(args);
+
+        assert_eq!(request.as_bytes(), b"-k1");
+
         let args = vec!["k1".to_string(), "k2".to_string(), "k3".to_string()];
         let request = DeleteRequest::new(args);
 
