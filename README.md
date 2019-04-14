@@ -8,42 +8,45 @@
 
 [![youtube](https://img.youtube.com/vi/stotBH8TCXY/0.jpg)](https://www.youtube.com/watch?v=stotBH8TCXY)
 
-## Communicate protocol
+## 通信
 
-- `get` command: prefix: '*'
+- `get` 命令: 前缀: '*'
+
     e.g.: get foo bar:
 
-    `server will received: '*foo bar'`
+    `服务端会收到: '*foo bar'`
 
-    `client will received: foo => bar\n!`
+    `客户端将会得到响应: foo => bar\n!`
 
-- `put` command: prefix: '+'
-    e.g.: get foo bar:
+- `put` 命令: 前缀: '+'
 
-    `server will received: '+foo bar'`
+    e.g.: put foo bar:
 
-    `client will received: Ok\n!`
+    `服务端会收到: '+foo bar'`
 
-- `delete` command: prefix: '-'
-    e.g.: get foo bar:
+    `客户端将会得到响应: Ok\n!`
 
-    `server will received: '-foo bar'`
+- `delete` 命令: 前缀: '-'
 
-    `client will received: Ok\n!`
+    e.g.: delete foo bar:
 
-- `scan` command: prefix: '/'
-    e.g.: get foo bar:
+    `服务端会收到: '-foo bar'`
 
-    `server will received: '/foo bar'`
+    `客户端将会得到响应: Ok\n!`
 
-    `client will received: foo => bar\n!`
+- `scan` 命令: 前缀: '/'
 
-`!` indicates the end of transfer.
+    e.g.: scan 1 10:
 
+    `服务端会收到: '/1 10'`
 
-## Persistence protocol
+    `客户端将会得到响应: foo => bar\n!`
 
-Due to time, store file content likes:
+## 持久化
+
+由于key与value都是String类型,目前来看,直接把字符串存到文件中是最简便的.
+
+如下:
 
 ```
 key1 value1
