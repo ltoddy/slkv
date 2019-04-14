@@ -6,6 +6,7 @@ pub struct Entry {
     value: String,
 }
 
+// base
 impl Entry {
     #[inline]
     pub fn new(key: String, value: String) -> Self {
@@ -25,7 +26,8 @@ impl Entry {
         buffer.push(32); // ascii: space
         buffer.append(&mut value.clone().into_bytes());
         buffer.push(10); // ascii: \n
-        println!("=======> {:?}", buffer);
+
+        // -> b"key value\n"
         buffer
     }
 }
