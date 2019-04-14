@@ -5,8 +5,8 @@ use std::io::{self, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::path::Path;
 
-use self::storage::Storage;
-use crate::config::{ADDRESS, FILE_PATH};
+use config::{ADDRESS, FILE_PATH};
+use storage::Storage;
 
 fn main() -> io::Result<()> {
     let mut storage = init();
@@ -79,7 +79,7 @@ fn dispatch(storage: &mut Storage, argument: String) -> String {
     } else if argument.starts_with('/') {
         storage.scan(args)
     } else {
-        // useless
+        // ignore wrong command.
         String::new()
     }
 }
